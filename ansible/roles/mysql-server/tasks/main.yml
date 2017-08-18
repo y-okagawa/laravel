@@ -1,0 +1,61 @@
+- name: aptリポジトリ追加
+  become: yes
+  apt:
+    deb: https://dev.mysql.com/get/mysql-apt-config_0.8.6-1_all.deb
+- name: パッケージ更新
+  become: yes
+  apt:
+    update_cache: yes
+- name: MySQLサーバインストール
+  become: yes
+  apt:
+    pkg: "{{item}}"
+    update_cache: yes
+  with_items:
+    - mysql-server
+    - libmysqlclient-dev
+- name: MySQL-pythonインストール
+  become: yes
+  pip:
+    name: MySQL-python
+- name: 設定変更
+  become: yes
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    state: present
+    backup: yes
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+    backrefs: yes
+  with_items:
+    - regexp: 'bind-address.*$'
+      line: '#bind-address    = 127.0.0.1'
+- name: サービス再起動
+  become: yes
+  service:
+    name: mysql
+    state: restarted
+- name: (外部接続用)ユーザー作成・権限付与
+  become: yes
+  mysql_user:
+    name: laravel
+    password: ""
+    host: "%"
+    priv: "*.*:ALL"
+    state: present
+- name: (localhost)ユーザー作成・権限付与
+  become: yes
+  mysql_user:
+    name: laravel
+    password: ""
+    host: localhost
+    priv: "*.*:ALL"
+    state: present
+- name: DB作成
+  become: yes
+  mysql_db:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - laravel
+    - laravel_test

@@ -1,0 +1,12 @@
+- name: シンボリックリンク作成
+  file:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    state: link
+  with_items:
+    - src: '{{ nginx.document_root }}/.env.development'
+      dest: '{{ nginx.document_root }}/.env'
+- name: composer install
+  composer:
+    command: install
+    working_dir: "{{ nginx.document_root }}"

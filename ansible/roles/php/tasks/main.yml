@@ -1,0 +1,19 @@
+- name: aptリポジトリ追加
+  become: yes
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+- name: PHPインストール
+  become: yes
+  apt:
+    update_cache: yes
+    pkg: "{{item}}"
+  with_items:
+    - php7.0
+    - php7.0-mbstring
+    - php7.0-xml
+    - php7.0-mysql
+    - php7.0-fpm
+- name: composerインストール
+  become: yes
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

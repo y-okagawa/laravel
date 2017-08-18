@@ -1,0 +1,31 @@
+- name: パッケージ更新
+  become: yes
+  apt:
+    update_cache: yes
+- name: タイムゾーンをAsia/Tokyoに設定
+  become: yes
+  command: timedatectl set-timezone Asia/Tokyo
+- name: パッケージインストール
+  become: yes
+  apt:
+    pkg: "{{item}}"
+    update_cache: yes
+  with_items:
+    - unzip
+    - python-dev
+    - python-pip
+- name: パッケージアンインストール
+  become: yes
+  apt:
+    pkg: "{{item}}"
+    state: present
+  with_items:
+    - apache2
+- name: サービス自動起動停止
+  become: yes
+  service:
+    name: "{{item}}"
+    state: stopped
+    enabled: no
+  with_items:
+    - apache2

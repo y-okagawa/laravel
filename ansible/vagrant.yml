@@ -1,0 +1,14 @@
+# ansible実行方法
+#   ansible-playbook vagrant.yml -i hosts -u vagrant --private-key 秘密鍵ファイルパス
+- hosts: vagrant
+  vars:
+    nginx:
+      http_conf_name: 80.conf
+      server_name: dev.laravel.com
+      document_root: /usr/local/www/laravel
+  roles:
+    - base
+    - php
+    - mysql-server
+    - nginx
+    - app-dev
