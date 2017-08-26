@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Repositories\User\UserRepositoryInterface;
 
-class UserController extends  Controller
+class SampleController extends Controller
 {
 
     private $userRepository;
